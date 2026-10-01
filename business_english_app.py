@@ -145,14 +145,14 @@ def make_options(word, field):
     return opts
 
 
-def nav(total):
+def nav(total, tag):
     c1, c2 = st.columns(2)
-    if c1.button("← Câu trước", disabled=st.session_state.i == 0, use_container_width=True):
+    if c1.button("← Câu trước", disabled=st.session_state.i == 0, use_container_width=True, key=f"prev_{tag}"):
         st.session_state.i -= 1
         st.session_state.flip = False
         st.rerun()
     if c2.button("Câu tiếp →", disabled=st.session_state.i >= total - 1,
-                 type="primary", use_container_width=True):
+                 type="primary", use_container_width=True, key=f"next_{tag}"):
         st.session_state.i += 1
         st.session_state.flip = False
         st.rerun()
@@ -242,18 +242,18 @@ with tabs[0]:
                 mark(word, True); st.rerun()
             if b.button("🔁 Chưa thuộc", use_container_width=True):
                 mark(word, False); st.rerun()
-    nav(len(words))
+    nav(len(words), "fc")
 
 with tabs[1]:
     st.markdown(f"<div class='big'>{word['vi']}</div>", unsafe_allow_html=True)
     choice_question(word, "vi", "CHỌN TỪ TIẾNG ANH CÓ NGHĨA:", "en", "mc")
-    nav(len(words))
+    nav(len(words), "mc")
 
 with tabs[2]:
     st.caption("NGHE VÀ CHỌN NGHĨA")
     speak_button(word["en"], f"ls{st.session_state.i}")
     choice_question(word, "en", "Từ vừa nghe có nghĩa là:", "vi", "ls")
-    nav(len(words))
+    nav(len(words), "ls")
 
 with tabs[3]:
     st.markdown(f"<div class='big'>{word['vi']}</div>", unsafe_allow_html=True)
@@ -267,4 +267,4 @@ with tabs[3]:
         mark(word, ok)
         (st.success if ok else st.error)(
             f"{'Chính xác!' if ok else 'Chưa đúng.'} Đáp án: **{word['en']}** — _{word['ex']}_")
-    nav(len(words))
+    nav(len(words), "ty")
